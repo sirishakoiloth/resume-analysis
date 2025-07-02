@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume Analyzer</title>
+</head>
+<body>
+  <h1>Upload Your Resume</h1>
+  <form id="resumeForm">
+    <input type="file" id="resume" name="resume" accept=".pdf" required />
+    <button type="submit">Analyze</button>
+  </form>
+
+  <h2>Analysis:</h2>
+  <pre id="result"></pre>
+
+  <script>
+    const form = document.getElementById('resumeForm');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById('resume');
+      const formData = new FormData();
+      formData.append('resume', fileInput.files[0]);
+
+      result.textContent = 'Analyzing...';
+
+      try {
+        const res = await fetch('http://localhost:3000/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await res.json();
+        result.textContent = data.analysis || 'Something went wrong.';
+      } catch (err) {
+        result.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
